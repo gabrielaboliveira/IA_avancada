@@ -33,9 +33,7 @@ e) Utilize as coleções de padrões fornecidas com o script, com no máximo 100
 Compare as duas implementações e discuta o tempo total e o número de estados expandidos excluindo a última camada F (impresso como "Expandido até o último salto"). Também compare os seus resultados ao usar uma única heurística de banco de dados de padrões com até 1000 estados abstratos, como no exercício (c).
 <pre>
 ```bash
-python3 ./fast-downward.py ./nomystery-opt11-strips/p01.pddl --search 
-"astar(pdb(pattern=greedy(1000)))"
-python3 ./fast-downward.py ./nomystery-opt11-strips/p01.pddl --search 
-"astar(planopt_cpdbs(patterns=[[0, 2, 3, 4]]))"
+python3 ./fast-downward.py ./nomystery-opt11-strips/p01.pddl --search "astar(pdb(pattern=greedy(1000)))"
+python3 ./fast-downward.py ./nomystery-opt11-strips/p01.pddl --search "astar(planopt_cpdbs(patterns=[[0, 2, 3, 4]]))"
  ```
 </pre>
