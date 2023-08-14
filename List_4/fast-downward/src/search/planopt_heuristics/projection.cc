@@ -44,6 +44,7 @@ namespace planopt_heuristics
         */
 
         // TODO: add your code for exercise (a) here.
+        // INICIO (a)
 
         for (int i = pattern.size() - 1; i >= 0; i--)
         {
@@ -71,6 +72,7 @@ namespace planopt_heuristics
         }
 
         // TODO: add your code for exercise (a) here.
+        // FIM (a)
     }
 
     TNFState Projection::project_state(const TNFState &original_state) const
