@@ -87,7 +87,7 @@ namespace planopt_heuristics
         }
         return abstract_state;
     }
-    //rank e unrank??????????????????
+    //rank: recebe um estado e retorna o index pro mapping
 
     int Projection::rank_state(const TNFState &state) const
     {
@@ -100,6 +100,7 @@ namespace planopt_heuristics
         return index;
     }
 
+//unrank recebe um index e retorna o estado pro mapping
     TNFState Projection::unrank_state(int index) const
     {
         vector<int> values(pattern.size());
