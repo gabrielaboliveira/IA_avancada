@@ -34,7 +34,7 @@ Usar o arquivo "run-ex-c" para testar:
 Comandos
 ```bash
 #!/bin/bash
-python3 ./fast-downward.py ./castle/castle-8-5-1-cards.pddl --search "astar(planopt_pdb(pattern=[56, 57, 58, 59, 60, 61, 62, 63, 64]))"
+python3 ./fast-downward/fast-downward.py ./castle/castle-8-5-1-cards.pddl --search "astar(planopt_pdb(pattern=[56, 57, 58, 59, 60, 61, 62, 63, 64]))"
 ```
 
 ### d) Canonical pdb
@@ -55,6 +55,6 @@ Arquivo: `canonical_pdbs.*`
 Comandos:
 
 ```bash
-python3 ./fast-downward.py ./nomystery-opt11-strips/p01.pddl --search "astar(pdb(pattern=greedy(1000)))"
-python3 ./fast-downward.py ./nomystery-opt11-strips/p01.pddl --search "astar(planopt_cpdbs(patterns=[[0, 2, 3, 4]]))"
+python3 ./fast-downward/fast-downward.py ./nomystery-opt11-strips/p01.pddl --search "astar(pdb(pattern=greedy(1000)))"
+python3 ./fast-downward/fast-downward.py ./nomystery-opt11-strips/p01.pddl --search "astar(planopt_cpdbs(patterns=[[0, 2, 3, 4]]))"
 ```
