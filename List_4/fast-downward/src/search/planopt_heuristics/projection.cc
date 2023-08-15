@@ -18,13 +18,15 @@ namespace planopt_heuristics
           variables to projected variables. In the example above, the mapping would
           be [-1, -1, -1, 0, -1, 2, -1, -1, 1, -1]
         */
-        vector<int> variable_mapping(task.variable_domains.size(), -1);
-        int var_id = 0;
+       //inicializado com -1 -> nenhuma variavel foi mapeada
+       //o tamanho do vetor e o tamanho da tarefa original
+        vector<int> variable_mapping(task.variable_domains.size(), -1); 
+        int var_id = 0; // variavel utilizada para atribuir index
         for (int pattern_var_id : pattern)
         {
-            variable_mapping[pattern_var_id] = var_id;
-            int domain_size = task.variable_domains[pattern_var_id];
-            projected_task.variable_domains.push_back(domain_size);
+            variable_mapping[pattern_var_id] = var_id; //atribui um index var_id para cada valor do pattern
+            int domain_size = task.variable_domains[pattern_var_id]; // o tamanho do dominio e o tamanho da variavel original
+            projected_task.variable_domains.push_back(domain_size); // ??????
             ++var_id;
         }
 
@@ -85,6 +87,7 @@ namespace planopt_heuristics
         }
         return abstract_state;
     }
+    //rank: recebe um estado e retorna o index pro mapping
 
     int Projection::rank_state(const TNFState &state) const
     {
@@ -97,6 +100,7 @@ namespace planopt_heuristics
         return index;
     }
 
+//unrank recebe um index e retorna o estado pro mapping
     TNFState Projection::unrank_state(int index) const
     {
         vector<int> values(pattern.size());
