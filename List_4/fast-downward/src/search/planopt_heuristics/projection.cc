@@ -26,7 +26,7 @@ namespace planopt_heuristics
         {
             variable_mapping[pattern_var_id] = var_id; //atribui um index var_id para cada valor do pattern
             int domain_size = task.variable_domains[pattern_var_id]; // o tamanho do dominio e o tamanho da variavel original
-            projected_task.variable_domains.push_back(domain_size); // ??????
+            projected_task.variable_domains.push_back(domain_size); 
             ++var_id;
         }
 
@@ -36,7 +36,7 @@ namespace planopt_heuristics
         int multiplier = 1;
         for (size_t i = 0; i < pattern.size(); ++i)
         {
-            perfect_hash_multipliers.push_back(multiplier);
+            perfect_hash_multipliers.push_back(multiplier); //N_i
             multiplier *= projected_task.variable_domains[i];
         }
 
@@ -48,8 +48,11 @@ namespace planopt_heuristics
         // TODO: add your code for exercise (a) here.
         // INICIO (a)
 
+
+
         for (int i = pattern.size() - 1; i >= 0; i--)
         {
+            //estado inicial da variavel projetada
             projected_task.initial_state.push_back(task.initial_state.at(i));
             projected_task.goal_state.push_back(task.goal_state.at(i));
         }
@@ -62,14 +65,22 @@ namespace planopt_heuristics
 
         for (const TNFOperator &op : task.operators)
         {
-            vector<TNFOperatorEntry> projected_entries;
+            vector<TNFOperatorEntry> projected_operators;
             for (const TNFOperatorEntry entry : op.entries)
             {
+                
                 int var_id = variable_mapping[entry.variable_id];
+                //se a variavel nao e -1 foi projetada
                 if (var_id != -1)
                 {
-                    projected_entries.emplace_back(var_id, entry.precondition_value, entry.effect_value);
+                    projected_operators.emplace_back(var_id, entry.precondition_value, entry.effect_value);
                 }
+            }
+            if(!projected_operators.empty()){
+                projected_task.operators.emplace_back(
+                    projected_operators,op.cost,op.name);
+                
+
             }
         }
 
@@ -87,8 +98,8 @@ namespace planopt_heuristics
         }
         return abstract_state;
     }
-    //rank: recebe um estado e retorna o index pro mapping
 
+    //retorna o index que faz o mapping daquele estado
     int Projection::rank_state(const TNFState &state) const
     {
         assert(state.size() == pattern.size());
@@ -100,7 +111,6 @@ namespace planopt_heuristics
         return index;
     }
 
-//unrank recebe um index e retorna o estado pro mapping
     TNFState Projection::unrank_state(int index) const
     {
         vector<int> values(pattern.size());
