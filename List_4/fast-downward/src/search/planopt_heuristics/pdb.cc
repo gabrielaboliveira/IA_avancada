@@ -50,30 +50,34 @@ PatternDatabase::PatternDatabase(const TNFTask &task, const Pattern &pattern)
     //usa rank(s) -> index
     //usa unrank (index) -> s
     //atualizar valor da distancia
-    unordered_set<int> closed;
 
     while (!queue.empty()) {
+
       QueueEntry entry = queue.top();
       queue.pop();
-
-      int distance = entry.first;
-      int index = entry.second;
-      TNFState abstract_state = projection.unrank_state(index);
       
-      if (closed.find(index) == closed.end()){
+      int distance_open = entry.first;
+      
+      int index = entry.second;
+      //qual a posicao no vetor distances pra cada estado abstrato? nao deveria ser o index?
+      
+      // TNFState abstract_state = projection.unrank_state(3);
+      
+      if(distances[index]>distance_open) {
+      //operator: <entry<variable_id, precondition, effect>, cost, name> 
       for (const auto &entry : projected_task.operators){
       //pra cada sucessor do abstract_sttate, inserir na open
       const auto &entries = entry.entries;
       
       for (const auto &tk : entries)
       {
-
         queue.push({lookup_distance(projection.unrank_state(tk.precondition_value)), projection.rank_state(projection.unrank_state(tk.precondition_value))});
       }
-      }}
-      //operator: <entry<variable_id, precondition, effect>, cost, name> 
+      }
+    }
+      
 
-      int new_distance = lookup_distance(abstract_state);
+      // int new_distance = lookup_distance(abstract_state);
 
     //
 
@@ -88,7 +92,6 @@ int PatternDatabase::lookup_distance(const TNFState &original_state) const {
     TNFState abstract_state = projection.project_state(original_state);
     
     int index = projection.rank_state(abstract_state);
-    cout<<index<<"end task goal state"<<endl;
     return distances[index];
 
 }
