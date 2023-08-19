@@ -59,9 +59,9 @@ PatternDatabase::PatternDatabase(const TNFTask &task, const Pattern &pattern)
     */
 
     int i = 0 ; //coloquei esse contador pra percorrer o distances, nao sei se esta certo
-
+    int count = 0;
     while (!queue.empty()) { //a condicao tambem poderia ser enquanto o distances nao esta preenchido
-
+      cout<<"======NOVO LOOP DA OPEN======"<<endl;
       QueueEntry entry = queue.top();
       queue.pop();
       
@@ -69,64 +69,62 @@ PatternDatabase::PatternDatabase(const TNFTask &task, const Pattern &pattern)
       int index = entry.second;
 
       if(distances[i]>entry_distance) {
-      distances[i] = entry_distance;
-      i++;
+        distances[i] = entry_distance;
+        i++;
 
-      TNFState state_old=projection.unrank_state(index);
-      TNFState state_new=projection.unrank_state(index);
+        TNFState state_old=projection.unrank_state(index);
+        TNFState state_new=projection.unrank_state(index);
 
-      //formato da classe operator: <entry<variable_id, precondition, effect>, cost, name> 
-      //percorre os operadores
-      for (const auto &entry : projected_task.operators){
-      
-      //cada opedor tem um componente que afeta uma variavel
-      const auto &entries = entry.entries;
-      int pre_conditions_test = 0; 
+        cout<< "ESTADO " << state_old<< endl;
+        //formato da classe operator: <entry<variable_id, precondition, effect>, cost, name> 
+        //percorre os operadores
+        for (const auto &entry : projected_task.operators){
 
-      int j =0;
-      //percorre as componentes que afetam cada variavel
-      cout<< "OPERADOR INITIAL" <<endl;
-      for (const auto &tk : entries)
-      {
-        
-        cout<<" var id " << tk.variable_id<< " effect "<<tk.effect_value << " precond "<<tk.precondition_value <<"- index " << index <<  endl;
-        //se na posicao i, o operador tem o variavel i: da pra acessar o estado direto sem precisar iterar
-        //se a variavel j tem o valor do efeito, assume o valor da pre condicao
-        if (tk.effect_value==state_old[j]){
-          state_new[j] = tk.precondition_value;
-          pre_conditions_test++;
+          //cada opedor tem um componente que afeta uma variavel
+          const auto &entries = entry.entries;
+          int pre_conditions_test = 0; 
+
+          //percorre as componentes que afetam cada variavel
+          cout<< "OPERADOR INITIAL" << endl;
+          for (const auto &tk : entries)
+          {
+            
+            //usa o proprio variable id pra acessar a variavel dentro do state
+            cout<<" VAR ID " << tk.variable_id<< " effect "<<tk.effect_value << " precond "<<tk.precondition_value <<"|| index " << index << endl;
+            cout<<"  IF efeito " << tk.effect_value<< " = "<<state_old[tk.variable_id] << " stated em var id "<< endl;
+            if (tk.effect_value==state_old[tk.variable_id]){
+              state_new[tk.variable_id] = tk.precondition_value;
+              pre_conditions_test++;
+              }
+          
           }
+          cout<< "OPERADOR END" <<endl;
+          
+          cout<< "  estado gerado " << state_new<< endl;
+          //insere o estado gerado na open
+          if(pre_conditions_test>=1){
+            queue.push({(lookup_distance(state_new) + entry.cost), projection.rank_state(state_new)});
+            cout<<"-------novo estado inserido----------"<<endl;
+            cout<<endl;
+            //reseta o estado e vai para o prox operador
+            state_new = state_old;
+          }
+          count++;
 
-        // for (size_t j = 0; j < state_new.size(); ++j) {
-        //   //se a variavel for a mesma altera o estado com a pre condicao, ja que a busca e reversa
-        //   //pelo que foi falado em aula, precisa conferir a condicao do efeito
-        //   cout<< "j "<<j<<" = variable id " << tk.variable_id << "|| effect "<< tk.effect_value << "= state new " << state_new[j] << "- pre conditions" << pre_conditions_test <<endl;
-        //   if (j==tk.variable_id && tk.effect_value==state_new[j]){
-        //   state_new[j] = tk.precondition_value;
-        //   pre_conditions_test++;
-        //   }
-        // }
-      
-      }
-      cout<< "OPERADOR END" <<endl;
-
-      //insere o estado gerado na open
-      if(pre_conditions_test>=1){//se o estado foi afetado, adiciona na open
-      queue.push({lookup_distance(state_new), projection.rank_state(state_new)});
-      cout<<"novo estado inserido"<<endl;
-      //reseta o estado e vai para o prox operador
-      state_new = state_old;
-      }
-      
+          //problema: ele gera o estado da forma certa aparentemente, mas parece estar usando sempre o mesmo operador
+          
+          //break de teste
+          // if(count==4){
+          //   break;
+          // }
+        }
+        cout<<endl;
       
     }
-
-
-
     }
-    }
+  }
 
-}
+
 
 // cout<<"teste"<<endl;
 // queue.push({lookup_distance(projection.unrank_state(tk.precondition_value)), tk.precondition_value});
