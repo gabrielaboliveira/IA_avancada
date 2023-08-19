@@ -3,22 +3,20 @@
 #include "../utils/logging.h"
 
 #include <queue>
-#include <limits>
+#include <limits> 
 
 using namespace std;
 
-namespace planopt_heuristics
-{
+namespace planopt_heuristics {
 
-  /*
-    An entry in the queue is a tuple (h, i) where h is the goal distance of state i.
-    See comments below for details.
-  */
-  using QueueEntry = pair<int, int>;
+/*
+  An entry in the queue is a tuple (h, i) where h is the goal distance of state i.
+  See comments below for details.
+*/
+using QueueEntry = pair<int, int>;
 
-  PatternDatabase::PatternDatabase(const TNFTask &task, const Pattern &pattern)
-      : projection(task, pattern)
-  {
+PatternDatabase::PatternDatabase(const TNFTask &task, const Pattern &pattern)
+    : projection(task, pattern) {
     /*
       We want to compute goal distances for all abstract states in the
       projected task. To do so, we start by assuming every abstract state has
@@ -29,9 +27,8 @@ namespace planopt_heuristics
       run the search on the hash indices of states. To go from a state s to its
       index use rank(s) and to go from an index i to its state use unrank(i).
     */
+
     const TNFTask &projected_task = projection.get_projected_task();
-    // o vetor distances é redimensionado para o tamanho da tarefa projetada
-    // e todos os elementos são inicializados para o máximo: inf, para depois inicializar a busca e atualizar o valor
     distances.resize(projected_task.get_num_states(), numeric_limits<int>::max());
 
     /*
@@ -39,7 +36,6 @@ namespace planopt_heuristics
       By using the comparator greater<T> instead of the default less<T>, we
       change the ordering to sort the smallest element first.
     */
-    // fila utilizada para o uniform cost search reverso
     priority_queue<QueueEntry, vector<QueueEntry>, greater<QueueEntry>> queue;
     /*
       Note that we start with the goal state to turn the search into a regression.
@@ -47,39 +43,88 @@ namespace planopt_heuristics
       later on. This is sufficient to turn the search into a regression since
       the task is in TNF.
     */
-    // insere ESTADO OBJETIVO: distancia zero e o indice de classificação
     queue.push({0, projection.rank_state(projected_task.goal_state)});
+    // cout<<"teste "<<projection.rank_state(projected_task.goal_state)<<endl;
+    // TODO: add your code for exercise (b) here.
 
-    // INICIO EXERICIO (b)
-    /* TODO: add your code for exercise (b) here: Computar a distancia
-    para todos os estados abstratos
+    /*o que precisamos fazer:
+      uniform cost search ao contrario nos indices dos estados
+      usa rank(s) -> index
+      usa unrank (index) -> s
+      atualizar valor da distancia para computar o pdb
     */
-    // inicializa a closed
-    unordered_set<int> closed;
-    // insere o goal na closed
-    closed.insert(closed.begin(), projection.rank_state(projected_task.goal_state));
-    queue.push({lookup_distance(projected_task.initial_state), projection.rank_state(projected_task.initial_state)});
-    closed.insert(closed.begin(), projection.rank_state(projected_task.initial_state));
 
-    for (const auto entry : projected_task.operators)
-    {
-      for (const auto tk : entry.entries)
+    /*Teste codigo
+    python3 ./build.py
+    python3 ./fast-downward/fast-downward.py ./castle/castle-8-5-1-cards.pddl --search "astar(planopt_pdb(pattern=[56, 57, 58, 59, 60, 61, 62, 63, 64]))"
+    */
+
+    int i = 0 ; //coloquei esse contador pra percorrer o distances, nao sei se esta certo
+
+    while (!queue.empty()) { //a condicao tambem poderia ser enquanto o distances nao esta preenchido
+
+      QueueEntry entry = queue.top();
+      queue.pop();
+      
+      int entry_distance = entry.first;
+      int index = entry.second;
+
+      if(distances[i]>entry_distance) {
+      distances[i] = entry_distance;
+      i++;
+
+      TNFState state_old=projection.unrank_state(index);
+      TNFState state_new=projection.unrank_state(index);
+
+      //formato da classe operator: <entry<variable_id, precondition, effect>, cost, name> 
+      //percorre os operadores
+      for (const auto &entry : projected_task.operators){
+      //cada opedor tem um componente que afeta uma variavel
+      const auto &entries = entry.entries;
+      //percorre as componentes que afetam cada variavel
+      for (const auto &tk : entries)
       {
-        if (closed.find(projection.rank_state(projection.unrank_state(tk.precondition_value))) == closed.end())
-        {
-          closed.insert(closed.begin(), projection.rank_state(projection.unrank_state(tk.precondition_value)));
-          queue.push({lookup_distance(projection.unrank_state(tk.precondition_value)), projection.rank_state(projection.unrank_state(tk.precondition_value))});
-        }
-      }
-    }
-  }
+        cout<<"effect value "<< projection.unrank_state(tk.effect_value) << "- index " << index << "- var id " << tk.variable_id<< endl;
+        //abstract_state[var_id] := original_state[pattern[var_id]];
 
-  int PatternDatabase::lookup_distance(const TNFState &original_state) const
-  {
+        //percorre o estado
+        for (size_t j = 0; j < state_new.size(); ++j) {
+        //cout<<"state old"<<state_new<< "- state old j"<< j << "- var id"<<tk.variable_id<<endl;
+          //se a variavel for a mesma altera o estado com a pre condicao, ja que a busca e reversa
+          //pelo que foi falado em aula, precisa conferir a condicao do efeito
+          if (j==tk.variable_id && tk.effect_value==state_new[j]){
+          state_new[j] = tk.precondition_value;
+          }
+        
+        }
+      
+      }
+      //PROBLEMA: esta gerando sempre o mesmo estado?
+      cout<<"novo estado gerado "<< state_new <<  "- rank state " << lookup_distance(state_new)<< endl;
+      //insere o estado gerado na open
+      queue.push({lookup_distance(state_new), projection.rank_state(state_new)});
+      cout<<"novo estado inserido"<<endl;
+      //reseta o estado e vai para o prox operador
+      state_new = state_old;
+    }
+
+
+
+    }
+    }
+
+}
+
+// cout<<"teste"<<endl;
+// queue.push({lookup_distance(projection.unrank_state(tk.precondition_value)), tk.precondition_value});
+
+int PatternDatabase::lookup_distance(const TNFState &original_state) const {
+
     TNFState abstract_state = projection.project_state(original_state);
+    
     int index = projection.rank_state(abstract_state);
     return distances[index];
-  }
-  // FIM EXERICIO (b)
+
+}
 
 }
