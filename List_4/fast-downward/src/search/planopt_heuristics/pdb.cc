@@ -46,46 +46,77 @@ PatternDatabase::PatternDatabase(const TNFTask &task, const Pattern &pattern)
     queue.push({0, projection.rank_state(projected_task.goal_state)});
     // cout<<"teste "<<projection.rank_state(projected_task.goal_state)<<endl;
     // TODO: add your code for exercise (b) here.
-    //ucs ao contrario nos indices dos estado
-    //usa rank(s) -> index
-    //usa unrank (index) -> s
-    //atualizar valor da distancia
 
-    while (!queue.empty()) {
+    /*o que precisamos fazer:
+      uniform cost search ao contrario nos indices dos estados
+      usa rank(s) -> index
+      usa unrank (index) -> s
+      atualizar valor da distancia para computar o pdb
+    */
+
+    /*Teste codigo
+    python3 ./build.py
+    python3 ./fast-downward/fast-downward.py ./castle/castle-8-5-1-cards.pddl --search "astar(planopt_pdb(pattern=[56, 57, 58, 59, 60, 61, 62, 63, 64]))"
+    */
+
+    int i = 0 ; //coloquei esse contador pra percorrer o distances, nao sei se esta certo
+
+    while (!queue.empty()) { //a condicao tambem poderia ser enquanto o distances nao esta preenchido
 
       QueueEntry entry = queue.top();
       queue.pop();
       
-      int distance_open = entry.first;
-      
+      int entry_distance = entry.first;
       int index = entry.second;
-      //qual a posicao no vetor distances pra cada estado abstrato? nao deveria ser o index?
-      
-      // TNFState abstract_state = projection.unrank_state(3);
-      
-      if(distances[index]>distance_open) {
-      //operator: <entry<variable_id, precondition, effect>, cost, name> 
+
+      if(distances[i]>entry_distance) {
+      distances[i] = entry_distance;
+      i++;
+
+      TNFState state_old=projection.unrank_state(index);
+      TNFState state_new=projection.unrank_state(index);
+
+      //formato da classe operator: <entry<variable_id, precondition, effect>, cost, name> 
+      //percorre os operadores
       for (const auto &entry : projected_task.operators){
-      //pra cada sucessor do abstract_sttate, inserir na open
+      //cada opedor tem um componente que afeta uma variavel
       const auto &entries = entry.entries;
-      
+      //percorre as componentes que afetam cada variavel
       for (const auto &tk : entries)
       {
-        queue.push({lookup_distance(projection.unrank_state(tk.precondition_value)), projection.rank_state(projection.unrank_state(tk.precondition_value))});
-      }
-      }
-    }
+        cout<<"effect value "<< projection.unrank_state(tk.effect_value) << "- index " << index << "- var id " << tk.variable_id<< endl;
+        //abstract_state[var_id] := original_state[pattern[var_id]];
+
+        //percorre o estado
+        for (size_t j = 0; j < state_new.size(); ++j) {
+        //cout<<"state old"<<state_new<< "- state old j"<< j << "- var id"<<tk.variable_id<<endl;
+          //se a variavel for a mesma altera o estado com a pre condicao, ja que a busca e reversa
+          //pelo que foi falado em aula, precisa conferir a condicao do efeito
+          if (j==tk.variable_id && tk.effect_value==state_new[j]){
+          state_new[j] = tk.precondition_value;
+          }
+        
+        }
       
+      }
+      //PROBLEMA: esta gerando sempre o mesmo estado?
+      cout<<"novo estado gerado "<< state_new <<  "- rank state " << lookup_distance(state_new)<< endl;
+      //insere o estado gerado na open
+      queue.push({lookup_distance(state_new), projection.rank_state(state_new)});
+      cout<<"novo estado inserido"<<endl;
+      //reseta o estado e vai para o prox operador
+      state_new = state_old;
+    }
 
-      // int new_distance = lookup_distance(abstract_state);
-
-    //
 
 
-
+    }
     }
 
 }
+
+// cout<<"teste"<<endl;
+// queue.push({lookup_distance(projection.unrank_state(tk.precondition_value)), tk.precondition_value});
 
 int PatternDatabase::lookup_distance(const TNFState &original_state) const {
 
