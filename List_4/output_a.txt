@@ -1,0 +1,17 @@
+INFO     Running search (release).
+INFO     search stdin: None
+INFO     search time limit: None
+INFO     search memory limit: None
+INFO     search command line string: /home/vboxuser/Documents/list4/fast-downward/builds/release/bin/downward --test-projections --internal-plan-file sas_plan
+Verifying projection to package:
+Variable domains are as expected.
+Initial state is as expected.
+Goal state is as expected.
+
+verifying projection to truck A and package:
+Variable domains are as expected.
+Initial state is as expected.
+Goal state is as expected.
+Peak memory: 9696 KB
+search exit code: 0
+

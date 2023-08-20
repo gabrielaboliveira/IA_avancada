@@ -1,0 +1,219 @@
+INFO     Running translator.
+INFO     translator stdin: None
+INFO     translator time limit: None
+INFO     translator memory limit: None
+INFO     translator command line string: /usr/bin/python3 /home/vboxuser/Documents/list4/fast-downward/builds/release/bin/translate/translate.py ./castle/domain.pddl ./castle/castle-8-5-1-cards.pddl --sas-file output.sas
+Parsing...
+Parsing: [0.000s CPU, 0.023s wall-clock]
+Normalizing task... [0.000s CPU, 0.000s wall-clock]
+Instantiating...
+Generating Datalog program... [0.000s CPU, 0.001s wall-clock]
+Normalizing Datalog program...
+Normalizing Datalog program: [0.000s CPU, 0.005s wall-clock]
+Preparing model... [0.000s CPU, 0.004s wall-clock]
+Generated 20 rules.
+Computing model... [0.020s CPU, 0.025s wall-clock]
+3662 relevant atoms
+1372 auxiliary atoms
+5034 final queue length
+10422 total queue pushes
+Completing instantiation... [0.080s CPU, 0.133s wall-clock]
+Instantiating: [0.100s CPU, 0.173s wall-clock]
+Computing fact groups...
+Finding invariants...
+7 initial candidates
+Finding invariants: [0.000s CPU, 0.002s wall-clock]
+Checking invariant weight... [0.000s CPU, 0.000s wall-clock]
+Instantiating groups... [0.000s CPU, 0.005s wall-clock]
+Collecting mutex groups... [0.000s CPU, 0.000s wall-clock]
+Choosing groups...
+32 uncovered facts
+Choosing groups: [0.000s CPU, 0.001s wall-clock]
+Building translation key... [0.000s CPU, 0.000s wall-clock]
+Computing fact groups: [0.000s CPU, 0.009s wall-clock]
+Building STRIPS to SAS dictionary... [0.000s CPU, 0.000s wall-clock]
+Building dictionary for full mutex groups... [0.000s CPU, 0.001s wall-clock]
+Building mutex information...
+Building mutex information: [0.000s CPU, 0.000s wall-clock]
+Translating task...
+Processing axioms...
+Simplifying axioms... [0.000s CPU, 0.001s wall-clock]
+Translator axioms removed by simplifying: 0
+Computing negative axioms... [0.000s CPU, 0.000s wall-clock]
+Processing axioms: [0.010s CPU, 0.013s wall-clock]
+Translating task: [0.080s CPU, 0.129s wall-clock]
+0 effect conditions simplified
+0 implied preconditions added
+Detecting unreachable propositions...
+0 operators removed
+0 axioms removed
+45 propositions removed
+Detecting unreachable propositions: [0.030s CPU, 0.058s wall-clock]
+Reordering and filtering variables...
+65 of 65 variables necessary.
+28 of 65 mutex groups necessary.
+2444 of 2444 operators necessary.
+0 of 0 axiom rules necessary.
+Reordering and filtering variables: [0.010s CPU, 0.020s wall-clock]
+Translator variables: 65
+Translator derived variables: 0
+Translator facts: 375
+Translator goal facts: 28
+Translator mutex groups: 28
+Translator total mutex groups size: 282
+Translator operators: 2444
+Translator axioms: 0
+Translator task size: 19248
+Translator peak memory: 56372 KB
+Writing output... [0.020s CPU, 0.033s wall-clock]
+Done! [0.240s CPU, 0.468s wall-clock]
+translate exit code: 0
+
+INFO     Running search (release).
+INFO     search stdin: output.sas
+INFO     search time limit: None
+INFO     search memory limit: None
+INFO     search command line string: /home/vboxuser/Documents/list4/fast-downward/builds/release/bin/downward --search 'astar(planopt_pdb(pattern=[56, 57, 58, 59, 60, 61, 62, 63, 64]))' --internal-plan-file sas_plan < output.sas
+reading input... [t=2.378e-05s]
+done reading input! [t=0.00883248s]
+Building successor generator...done! [t=0.0608247s]
+peak memory difference for successor generator creation: 0 KB
+time for successor generation creation: 0.00115794s
+Variables: 65
+FactPairs: 375
+Bytes per state: 20
+Conducting best first search with reopening closed nodes, (real) bound = 2147483647
+New best heuristic value for planopt_pdb(pattern = list(56, 57, 58, 59, 60, 61, 62, 63, 64)): 9
+[g=0, 1 evaluated, 0 expanded, t=0.0610093s, 11704 KB]
+f = 9 [1 evaluated, 0 expanded, t=0.061029s, 11704 KB]
+Initial heuristic value for planopt_pdb(pattern = list(56, 57, 58, 59, 60, 61, 62, 63, 64)): 9
+pruning method: none
+f = 10 [2 evaluated, 1 expanded, t=0.0610597s, 11704 KB]
+f = 11 [4 evaluated, 2 expanded, t=0.0610791s, 11704 KB]
+f = 12 [6 evaluated, 4 expanded, t=0.0610998s, 11704 KB]
+f = 13 [8 evaluated, 6 expanded, t=0.0611202s, 11704 KB]
+f = 14 [13 evaluated, 8 expanded, t=0.0611531s, 11704 KB]
+f = 15 [30 evaluated, 13 expanded, t=0.0612133s, 11704 KB]
+f = 16 [71 evaluated, 30 expanded, t=0.0612993s, 11704 KB]
+f = 17 [151 evaluated, 71 expanded, t=0.0614549s, 11704 KB]
+New best heuristic value for planopt_pdb(pattern = list(56, 57, 58, 59, 60, 61, 62, 63, 64)): 8
+[g=9, 159 evaluated, 74 expanded, t=0.0614858s, 11704 KB]
+f = 18 [307 evaluated, 153 expanded, t=0.0617862s, 11704 KB]
+f = 19 [520 evaluated, 309 expanded, t=0.0622822s, 11704 KB]
+f = 20 [689 evaluated, 520 expanded, t=0.062817s, 11704 KB]
+f = 21 [789 evaluated, 690 expanded, t=0.0632386s, 11704 KB]
+f = 22 [857 evaluated, 790 expanded, t=0.0634797s, 11704 KB]
+f = 23 [912 evaluated, 857 expanded, t=0.0636454s, 11704 KB]
+f = 24 [958 evaluated, 912 expanded, t=0.0638464s, 11704 KB]
+f = 25 [1029 evaluated, 958 expanded, t=0.0640951s, 11704 KB]
+f = 26 [1130 evaluated, 1029 expanded, t=0.0643315s, 11704 KB]
+f = 27 [1261 evaluated, 1130 expanded, t=0.064659s, 11704 KB]
+New best heuristic value for planopt_pdb(pattern = list(56, 57, 58, 59, 60, 61, 62, 63, 64)): 7
+[g=20, 1379 evaluated, 1222 expanded, t=0.0649549s, 11704 KB]
+f = 28 [1434 evaluated, 1263 expanded, t=0.0651405s, 11704 KB]
+f = 29 [1648 evaluated, 1443 expanded, t=0.0657612s, 11704 KB]
+f = 30 [1927 evaluated, 1659 expanded, t=0.0664722s, 11704 KB]
+f = 31 [2278 evaluated, 1945 expanded, t=0.0674835s, 11704 KB]
+f = 32 [2752 evaluated, 2304 expanded, t=0.0687334s, 11704 KB]
+New best heuristic value for planopt_pdb(pattern = list(56, 57, 58, 59, 60, 61, 62, 63, 64)): 6
+[g=26, 2774 evaluated, 2318 expanded, t=0.0688314s, 11704 KB]
+f = 33 [3421 evaluated, 2796 expanded, t=0.0705257s, 11704 KB]
+f = 34 [4319 evaluated, 3470 expanded, t=0.0730153s, 11704 KB]
+New best heuristic value for planopt_pdb(pattern = list(56, 57, 58, 59, 60, 61, 62, 63, 64)): 5
+[g=29, 4350 evaluated, 3502 expanded, t=0.0731484s, 11704 KB]
+f = 35 [5568 evaluated, 4379 expanded, t=0.0762155s, 11704 KB]
+New best heuristic value for planopt_pdb(pattern = list(56, 57, 58, 59, 60, 61, 62, 63, 64)): 4
+[g=31, 5569 evaluated, 4380 expanded, t=0.0763606s, 11704 KB]
+f = 36 [7373 evaluated, 5673 expanded, t=0.0811809s, 11704 KB]
+f = 37 [10017 evaluated, 7529 expanded, t=0.0884799s, 11896 KB]
+f = 38 [13966 evaluated, 10251 expanded, t=0.0989315s, 12032 KB]
+f = 39 [19961 evaluated, 14269 expanded, t=0.115152s, 12400 KB]
+f = 40 [29628 evaluated, 20449 expanded, t=0.14046s, 12808 KB]
+New best heuristic value for planopt_pdb(pattern = list(56, 57, 58, 59, 60, 61, 62, 63, 64)): 3
+[g=37, 29856 evaluated, 20619 expanded, t=0.141384s, 12808 KB]
+f = 41 [45472 evaluated, 30491 expanded, t=0.18377s, 13732 KB]
+New best heuristic value for planopt_pdb(pattern = list(56, 57, 58, 59, 60, 61, 62, 63, 64)): 2
+[g=39, 45485 evaluated, 30495 expanded, t=0.183963s, 13732 KB]
+f = 42 [71101 evaluated, 46888 expanded, t=0.258909s, 15192 KB]
+f = 43 [113582 evaluated, 73207 expanded, t=0.376274s, 16816 KB]
+New best heuristic value for planopt_pdb(pattern = list(56, 57, 58, 59, 60, 61, 62, 63, 64)): 1
+[g=42, 113599 evaluated, 73215 expanded, t=0.376505s, 16816 KB]
+New best heuristic value for planopt_pdb(pattern = list(56, 57, 58, 59, 60, 61, 62, 63, 64)): 0
+[g=43, 113607 evaluated, 73216 expanded, t=0.376586s, 16816 KB]
+f = 44 [188406 evaluated, 117089 expanded, t=0.583007s, 20908 KB]
+f = 45 [321554 evaluated, 194477 expanded, t=0.961627s, 28452 KB]
+f = 46 [549045 evaluated, 331350 expanded, t=1.62636s, 41908 KB]
+f = 47 [923087 evaluated, 563687 expanded, t=2.75826s, 71400 KB]
+f = 48 [1521595 evaluated, 943826 expanded, t=4.59578s, 89684 KB]
+Solution found!
+Actual search time: 4.54681s [t=4.60787s]
+move diamond7 club6 heart8 (1)
+move heart5 diamond6 club6 (1)
+move diamond6 club5 diamond7 (1)
+move club5 spade4 diamond6 (1)
+move heart3 heart2 spade4 (1)
+discard heart2 diamond3 hearta (1)
+discard heart3 spade4 heart2 (1)
+move spade4 heart4 club5 (1)
+discard heart4 club7 heart3 (1)
+move club3 diamond5 spade4 (1)
+discard heart5 club6 heart4 (1)
+move club6 diamond8 club7 (1)
+move diamond5 club2 club6 (1)
+discard club2 spade3 cluba (1)
+discard club3 spade4 club2 (1)
+move spade4 club5 diamond5 (1)
+move diamond3 spade2 spade4 (1)
+discard spade2 spade7 spadea (1)
+discard spade3 club8 spade2 (1)
+move spade7 pile3 club8 (1)
+move club5 diamond6 pile3 (1)
+move diamond6 diamond7 spade7 (1)
+move diamond7 heart8 diamond8 (1)
+move club5 pile3 diamond6 (1)
+move heart8 spade6 pile3 (1)
+move spade6 spade5 diamond7 (1)
+move spade5 diamond2 spade6 (1)
+discard diamond2 diamond4 diamonda (1)
+discard diamond3 spade4 diamond2 (1)
+discard spade4 diamond5 spade3 (1)
+discard spade5 spade6 spade4 (1)
+discard diamond4 pile4 diamond3 (1)
+discard diamond5 club6 diamond4 (1)
+move club5 diamond6 club6 (1)
+discard diamond6 spade7 diamond5 (1)
+discard spade6 diamond7 spade5 (1)
+discard diamond7 diamond8 diamond6 (1)
+discard diamond8 heart6 diamond7 (1)
+discard heart6 spade8 heart5 (1)
+discard spade7 club8 spade6 (1)
+discard spade8 club4 spade7 (1)
+discard club4 pile0 club3 (1)
+discard club5 club6 club4 (1)
+discard club6 club7 club5 (1)
+discard club7 pile2 club6 (1)
+discard club8 heart7 club7 (1)
+discard heart7 pile1 heart6 (1)
+discard heart8 pile3 heart7 (1)
+Plan length: 48 step(s).
+Plan cost: 48
+Expanded 945876 state(s).
+Reopened 0 state(s).
+Evaluated 1525491 state(s).
+Evaluations: 1525491
+Generated 5200458 state(s).
+Dead ends: 0 state(s).
+Expanded until last jump: 943826 state(s).
+Reopened until last jump: 0 state(s).
+Evaluated until last jump: 1521595 state(s).
+Generated until last jump: 5180639 state(s).
+Number of registered states: 1525491
+Int hash set load factor: 1525491/2097152 = 0.727411
+Int hash set resizes: 21
+Search time: 4.54691s
+Total time: 4.60789s
+Solution found.
+Peak memory: 89816 KB
+Remove intermediate file output.sas
+search exit code: 0
+
