@@ -37,27 +37,17 @@ namespace planopt_heuristics
         // INICIO (d)
         //  TODO: add your code for exercise (d) here.
 
-        /*
-        int linha = 0;
-        for(auto &row:graph){ 
-            cout << "Linha: " << linha << " - ";
-            for(auto &column:row){
-                cout << column << " ";
-            }
-            cout << endl;
-            linha++; 
-        }
-        */
 
+        //percorre dois patterns simultaneamente
         for (int i = 0; i < (int) patterns.size() - 1; i++)
         {
-
             for (int j = i + 1 ; j < (int) patterns.size(); j++)
             {
-                //cout << "i = " << i << ", j = " << j << endl;
                 bool should_be_added = true;
+                //percorre o operador
                 for (const auto &op : task.operators)
-                { 
+                {
+                    //se afetar os dois patterns, nao adiciona
                     if((affects_pattern(op, patterns[i]) && affects_pattern(op, patterns[j])))
                     {   
                         should_be_added = false;
@@ -70,22 +60,6 @@ namespace planopt_heuristics
                 }      
             }   
         }
-        /* 
-        cout << "PATTERN SIZE: " << patterns.size() << endl;
-        cout << "AMOUNT OF LINES: " << graph.size() << endl;
-        // FIM (d)
-
-        linha = 0;
-
-        for(auto &row:graph){
-            cout << "Linha: " << linha << " - ";
-            for(auto &column:row){
-                cout << column << " ";
-            }
-            cout << endl;
-            linha++;
-        }
-        */
         return graph;
     }
 
@@ -133,8 +107,11 @@ namespace planopt_heuristics
         // INICIO (d)
         //  TODO: add your code for exercise (d) here.
 
+        //Percorre os conjuntos de cliques
         for(const auto &maximal_clique : maximal_additive_sets){
             int heuristic_current_clique = 0;
+
+            //Realiza soma acumulada das heuristicas
             for(int i = 0; i < (int) maximal_clique.size(); i++){
                 heuristic_current_clique += heuristic_values[i];
             }
