@@ -66,19 +66,8 @@ PatternDatabase::PatternDatabase(const TNFTask &task, const Pattern &pattern)
       the task is in TNF.
     */
     queue.push({0, projection.rank_state(projected_task.goal_state)});
-    // cout<<"teste "<<projection.rank_state(projected_task.goal_state)<<endl;
+
     // TODO: add your code for exercise (b) here.
-
-    /*ucs ao contrario nos indices dos estados
-      usa rank(s) -> index
-      usa unrank (index) -> s
-      atualizar valor da distancia
-    */
-
-    /*Teste codigo
-    python3 ./build.py
-    python3 ./fast-downward/fast-downward.py ./castle/castle-8-5-1-cards.pddl --search "astar(planopt_pdb(pattern=[56, 57, 58, 59, 60, 61, 62, 63, 64]))"
-    */
 
     while (!queue.empty()) {
       QueueEntry entry = queue.top();
@@ -87,27 +76,28 @@ PatternDatabase::PatternDatabase(const TNFTask &task, const Pattern &pattern)
       int current_cost = entry.first;
       int current_pdb_index = entry.second;
 
-      //cout << "Olha o index ai: " << current_pdb_index << endl;
-
-      //cout << "Olha o tamanho ai: " << distances.size() << endl;
-
+      //distances funciona como uma closed, se o valor e maior, nao foi expandido
       if(distances[current_pdb_index] > current_cost){
-        //cout << "Pelo menos!" << endl;
+
+        //atualiza a distancia
         distances[current_pdb_index] = current_cost;
 
         TNFState current_state = projection.unrank_state(current_pdb_index);
 
+        //gerando os novos estados
         for (const auto &op : projected_task.operators){
 
+          //Confere se o operador e aplicavel no estado atual
           if(can_apply_operator(op, current_state)){
-            //cout << "Pode aplicar!" << endl;
-            
+
+            //Gera o predecessor, sucessor na reversa
             TNFState predecessor_state = get_predecessor(op, current_state);
             int predecessor_pdb_index = projection.rank_state(predecessor_state);
             int predecessor_cost = current_cost + op.cost;
 
+            //insere novo estado na open
             if(distances[predecessor_pdb_index] > predecessor_cost){
-              //cout << "Vai pushar!" << endl;
+
               queue.push({predecessor_cost, predecessor_pdb_index});
             }
           }
