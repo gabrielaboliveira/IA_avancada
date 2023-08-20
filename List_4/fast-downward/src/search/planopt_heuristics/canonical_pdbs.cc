@@ -36,24 +36,67 @@ namespace planopt_heuristics
         vector<vector<int>> graph(patterns.size());
         // INICIO (d)
         //  TODO: add your code for exercise (d) here.
-        for (int i = 0; i < patterns.size(); i++)
-        {
-            bool affects = false;
-            for (const auto &op : task.operators)
-            {
-                if (affects_pattern(op, patterns[i]))
-                {
-                    affects = true;
-                    break;
-                }
+
+        /*
+        int linha = 0;
+        for(auto &row:graph){ 
+            cout << "Linha: " << linha << " - ";
+            for(auto &column:row){
+                cout << column << " ";
             }
-            if (!affects)
-            {
-                graph.push_back(patterns[i]);
-            }
+            cout << endl;
+            linha++; 
         }
+        */
+
+        for (int i = 0; i < (int) patterns.size(); i++)
+        {
+            vector<int> affected;
+            for (int j = 0 ; j < (int) patterns.size(); j++)
+            {
+                //cout << "i = " << i << ", j = " << j << endl;
+                if(i != j){
+                    bool should_be_added = true;
+                    for (const auto &op : task.operators)
+                    { 
+                        if((affects_pattern(op, patterns[i]) && affects_pattern(op, patterns[j])))
+                        {   
+                            should_be_added = false;
+                            break;
+                        }
+                    } 
+                    if(should_be_added){
+                        affected.push_back(j);
+                    }
+                }       
+            }
+            /* 
+            cout << "VOU PUSHAR " << endl;
+            cout << "AFFECTED OF i =  " << i << ": ";
+            for(int n : affected){
+                cout << n << " ";
+            }
+            cout << endl;
+             */        
+            graph[i] = affected;  
+        }
+        /* 
+        cout << "TOMALE PRINT" << endl;
+        cout << "PATTERN SIZE: " << patterns.size() << endl;
+        cout << "AMOUNT OF LINES: " << graph.size() << endl;
         // FIM (d)
 
+        linha = 0;
+
+        for(auto &row:graph){
+            cout << "Linha: " << linha << " - ";
+            for(auto &column:row){
+                cout << column << " ";
+            }
+            cout << endl;
+            linha++;
+        }
+        */
         return graph;
     }
 
@@ -100,11 +143,15 @@ namespace planopt_heuristics
         int h = 0;
         // INICIO (d)
         //  TODO: add your code for exercise (d) here.
-        for (const auto k : maximal_additive_sets.front())
-        {
-            if (k > h)
-            {
-                h = k;
+
+        for(const auto &maximal_clique : maximal_additive_sets){
+            int heuristic_current_clique = 0;
+            for(int i = 0; i < (int) maximal_clique.size(); i++){
+                heuristic_current_clique += heuristic_values[i];
+            }
+            
+            if(h < heuristic_current_clique){
+                h = heuristic_current_clique;
             }
         }
 
