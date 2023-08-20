@@ -49,7 +49,6 @@ namespace planopt_heuristics
         // INICIO (a)
 
 
-
         for (int i = 0; i < (int) pattern.size(); i++)
         {
             //estado inicial da variavel projetada
