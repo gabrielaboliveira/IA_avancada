@@ -49,39 +49,28 @@ namespace planopt_heuristics
         }
         */
 
-        for (int i = 0; i < (int) patterns.size(); i++)
+        for (int i = 0; i < (int) patterns.size() - 1; i++)
         {
-            vector<int> affected;
-            for (int j = 0 ; j < (int) patterns.size(); j++)
+
+            for (int j = i + 1 ; j < (int) patterns.size(); j++)
             {
                 //cout << "i = " << i << ", j = " << j << endl;
-                if(i != j){
-                    bool should_be_added = true;
-                    for (const auto &op : task.operators)
-                    { 
-                        if((affects_pattern(op, patterns[i]) && affects_pattern(op, patterns[j])))
-                        {   
-                            should_be_added = false;
-                            break;
-                        }
-                    } 
-                    if(should_be_added){
-                        affected.push_back(j);
+                bool should_be_added = true;
+                for (const auto &op : task.operators)
+                { 
+                    if((affects_pattern(op, patterns[i]) && affects_pattern(op, patterns[j])))
+                    {   
+                        should_be_added = false;
+                        break;
                     }
-                }       
-            }
-            /* 
-            cout << "VOU PUSHAR " << endl;
-            cout << "AFFECTED OF i =  " << i << ": ";
-            for(int n : affected){
-                cout << n << " ";
-            }
-            cout << endl;
-             */        
-            graph[i] = affected;  
+                } 
+                if(should_be_added){
+                    graph[i].push_back(j);
+                    graph[j].push_back(i);
+                }      
+            }   
         }
         /* 
-        cout << "TOMALE PRINT" << endl;
         cout << "PATTERN SIZE: " << patterns.size() << endl;
         cout << "AMOUNT OF LINES: " << graph.size() << endl;
         // FIM (d)
