@@ -34,26 +34,44 @@ namespace planopt_heuristics
         */
 
         vector<vector<int>> graph(patterns.size());
-        // INICIO (d)
-        //  TODO: add your code for exercise (d) here.
-        for (int i = 0; i < patterns.size(); i++)
-        {
-            bool affects = false;
-            for (const auto &op : task.operators)
-            {
-                if (affects_pattern(op, patterns[i]))
-                {
-                    affects = true;
+
+        // TODO: add your code for exercise (d) here.
+        //python3 ./fast-downward/fast-downward.py ./nomystery-opt11-strips/p01.pddl --search "astar(pdb(pattern=greedy(1000)))"
+        //python3 ./fast-downward/fast-downward.py ./nomystery-opt11-strips/p01.pddl --search "astar(planopt_cpdbs(patterns=[[3, 4, 5], [2]]))"
+        //pra cada pattern, confere se o operador afeta
+        for (int i = 0; i < patterns.size(); i++) {
+            bool affects_i = false;
+            for (const auto &op : task.operators) {
+                if (affects_pattern(op, patterns[i])) {
+                    affects_i = true;
                     break;
                 }
             }
-            if (!affects)
-            {
-                graph.push_back(patterns[i]);
+        cout<< affects_i << endl;
+            if (affects_i) {
+                for (int j = 0; j < patterns.size(); j++) {
+                    bool affects_j = false;
+                    for (const auto &op : task.operators) {
+                        if (affects_pattern(op, patterns[j])) {
+                            affects_j = true;
+                            break;
+                        }
+                    }
+                    if (affects_j) {
+                        graph[i].push_back(j);
+                    }
+                }
             }
         }
-        // FIM (d)
 
+    //     std::cout << " VALORES GRAPH " ;
+    //     for (const auto& row : graph) {
+    //     for (int value : row) {
+    //         std::cout << " - " << value;
+    //     }
+    //     std::cout << std::endl;
+    // }
+// end (d)
         return graph;
     }
 
@@ -98,8 +116,8 @@ namespace planopt_heuristics
           of the canonical heuristic.
         */
         int h = 0;
-        // INICIO (d)
-        //  TODO: add your code for exercise (d) here.
+
+        // TODO: add your code for exercise (d) here.
         for (const auto k : maximal_additive_sets.front())
         {
             if (k > h)
@@ -110,7 +128,7 @@ namespace planopt_heuristics
 
         return h;
 
-        // fim (d)
+        // end (d)
     }
 
 }
