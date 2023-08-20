@@ -50,11 +50,11 @@ namespace planopt_heuristics
 
 
 
-        for (int i = pattern.size() - 1; i >= 0; i--)
+        for (int i = 0; i < (int) pattern.size(); i++)
         {
             //estado inicial da variavel projetada
-            projected_task.initial_state.push_back(task.initial_state.at(i));
-            projected_task.goal_state.push_back(task.goal_state.at(i));
+            projected_task.initial_state.push_back(task.initial_state[pattern[i]]);
+            projected_task.goal_state.push_back(task.goal_state[pattern[i]]);
         }
 
         /*

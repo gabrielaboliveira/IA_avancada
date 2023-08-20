@@ -15,6 +15,28 @@ namespace planopt_heuristics {
 */
 using QueueEntry = pair<int, int>;
 
+bool can_apply_operator(TNFOperator op, TNFState state){
+  //Can only apply the operator on state S to get to state S+1 if ALL values of S+1 were in the effects of the operator
+  //TNF then all the variables in effect and in precondition!
+  for(const TNFOperatorEntry &entry : op.entries){
+    if(entry.effect_value != state[entry.variable_id]){
+      return false;
+    }
+  }
+  return true;
+}
+
+
+TNFState get_predecessor(TNFOperator op, TNFState state){
+  TNFState predecessor_state = state;
+
+  for(const TNFOperatorEntry &entry : op.entries){
+    predecessor_state[entry.variable_id] = entry.precondition_value;
+  }
+
+  return predecessor_state;
+}
+
 PatternDatabase::PatternDatabase(const TNFTask &task, const Pattern &pattern)
     : projection(task, pattern) {
     /*
@@ -58,83 +80,41 @@ PatternDatabase::PatternDatabase(const TNFTask &task, const Pattern &pattern)
     python3 ./fast-downward/fast-downward.py ./castle/castle-8-5-1-cards.pddl --search "astar(planopt_pdb(pattern=[56, 57, 58, 59, 60, 61, 62, 63, 64]))"
     */
 
-    int i = 0 ; //coloquei esse contador pra percorrer o distances, nao sei se esta certo
-    int count = 0;
-    std::unordered_set<int> operatorclosed; 
-
-
-    while (!queue.empty()) { //a condicao tambem poderia ser enquanto o distances nao esta preenchido
-      cout<<"======NOVO LOOP DA OPEN======"<<endl;
+    while (!queue.empty()) {
       QueueEntry entry = queue.top();
       queue.pop();
       
-      int entry_distance = entry.first;
-      int index = entry.second;
+      int current_cost = entry.first;
+      int current_pdb_index = entry.second;
 
-      if(distances[i]>entry_distance) {
-        distances[i] = entry_distance;
-        i++;
+      //cout << "Olha o index ai: " << current_pdb_index << endl;
 
-        TNFState state_old=projection.unrank_state(index);
-        TNFState state_new=projection.unrank_state(index);
+      //cout << "Olha o tamanho ai: " << distances.size() << endl;
 
-        cout<< "ESTADO " << state_old<< endl;
-        //formato da classe operator: <entry<variable_id, precondition, effect>, cost, name> 
-        //percorre os operadores
-        for (const auto &entry : projected_task.operators){
+      if(distances[current_pdb_index] > current_cost){
+        //cout << "Pelo menos!" << endl;
+        distances[current_pdb_index] = current_cost;
 
-          //cada opedor tem um componente que afeta uma variavel
-          const auto &entries = entry.entries;
-          int pre_conditions_test = 0; 
+        TNFState current_state = projection.unrank_state(current_pdb_index);
 
-          //percorre as componentes que afetam cada variavel
-          cout<< "OPERADOR INITIAL " << entry.name<< endl;
-          for (const auto &tk : entries)
-          {
+        for (const auto &op : projected_task.operators){
+
+          if(can_apply_operator(op, current_state)){
+            //cout << "Pode aplicar!" << endl;
             
-            //usa o proprio variable id pra acessar a variavel dentro do state
-            cout<<" VAR ID " << tk.variable_id<< " effect "<<tk.effect_value << " precond "<<tk.precondition_value <<"|| index " << index << endl;
-            cout<<"  IF efeito " << tk.effect_value<< " = "<<state_old[tk.variable_id] << " stated em var id "<< endl;
-            //Mais um teste pra ver se a variavel ja nao e igual a pre condicao, ai nao precisa inserir
-            if (tk.effect_value==state_old[tk.variable_id] && state_new[tk.variable_id] != tk.precondition_value){
-              state_new[tk.variable_id] = tk.precondition_value;
-              pre_conditions_test++;
-              }
-          
-          }
-          cout<< "OPERADOR END" <<endl;
-          
-          
-          QueueEntry state_queue = {(lookup_distance(state_new) + entry.cost), projection.rank_state(state_new)};
-          cout<< "  estado gerado " << state_queue.second << endl;
-          //insere o estado gerado na open
-          if(pre_conditions_test>=1 && operatorclosed.find(state_queue.second)==operatorclosed.end()){
-            operatorclosed.insert(state_queue.second); //coloquei um unordered set pra testar se ja nao foi inserido, nao sei se ta certo assim
-            queue.push(state_queue);
-            cout<<"-------novo estado inserido----------"<<endl;
-            cout<<endl;
-            //reseta o estado e vai para o prox operador
-            state_new = state_old;
-          }
-          count++;
+            TNFState predecessor_state = get_predecessor(op, current_state);
+            int predecessor_pdb_index = projection.rank_state(predecessor_state);
+            int predecessor_cost = current_cost + op.cost;
 
-          //problema: ele gera o estado da forma certa aparentemente, mas parece estar usando sempre o mesmo operador
-          
-          //break de teste
-          //  if(count==5){
-          //    break;
-          // }
-        }
-        cout<<endl;
-      
-    }
+            if(distances[predecessor_pdb_index] > predecessor_cost){
+              //cout << "Vai pushar!" << endl;
+              queue.push({predecessor_cost, predecessor_pdb_index});
+            }
+          }
+      }
     }
   }
-
-
-
-// cout<<"teste"<<endl;
-// queue.push({lookup_distance(projection.unrank_state(tk.precondition_value)), tk.precondition_value});
+}
 
 int PatternDatabase::lookup_distance(const TNFState &original_state) const {
 
